@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>添加习惯</title>
+</head>
+<body>
+
+    <a href="{% url 'learning_logs:index' %}">🏠 回到首页</a><br>
+
+    <h2>➕ 创建一个新习惯</h2>
+
+    {% if form.errors %}
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li><strong>{{ field.label }}：</strong> {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form action="{% url 'learning_logs:add_habit' %}" method="post" autocomplete="off">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button name="submit">添加习惯</button>
+    </form>
+
+    <a href="{% url 'learning_logs:habits' %}">返回打卡页</a>
+</body>
+</html>
+
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>打卡日志</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        ul {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            list-style-type: none;
+        }
+        li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        span {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📜 打卡日志</h1>
+
+    <ul>
+        {% for log in logs %}
+            <li>
+                {{ log.date }} - {{ log.habit.name }} -
+                {% if log.completed %}
+                    <span style="color:green;">✔ 已完成</span>
+                {% else %}
+                    <span style="color:red;">✘ 未完成</span>
+                {% endif %}
+                {% if log.notes %}
+                    - 备注: {{ log.notes }}
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>暂无打卡日志。</li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
+

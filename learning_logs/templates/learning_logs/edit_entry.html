@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑条目</title>
+</head>
+<body>
+    <h1>编辑条目</h1>
+    <p>所属话题: {{ topic.text }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">保存</button>
+    </form>
+
+    <a href="{% url 'learning_logs:topic_detail' topic.id %}">返回话题详情</a>
+</body>
+</html>
+

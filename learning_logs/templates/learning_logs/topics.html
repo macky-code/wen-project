@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的主题</title>
+</head>
+<body>
+    <h1>我的主题</h1>
+    <ul>
+        {% for topic in topics %}
+        <li>
+            <a href="{% url 'learning_logs:topic_detail' topic.id %}">{{ topic.text }}</a>
+
+            <!-- 只有当前用户是 topic.owner 时，才显示删除按钮 -->
+            {% if topic.owner == request.user %}
+                <a href="{% url 'learning_logs:delete_topic' topic.id %}" style="color: red; margin-left: 10px;">
+                    删除
+                </a>
+            {% endif %}
+        </li>
+        {% empty %}
+        <li>没有主题，请添加一个！</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'learning_logs:new_topic' %}">添加新主题</a>
+</body>
+</html>
+
+

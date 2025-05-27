@@ -1,0 +1,31 @@
+<!-- learning_logs/topic_detail.html -->
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ topic.text }}</title>
+</head>
+<body>
+    <h1>{{ topic.text }}</h1>
+    <p>这是话题的详细内容。</p>
+
+    <!-- 删除话题链接 -->
+    <a href="{% url 'learning_logs:delete_topic' topic.id %}">删除话题</a>
+
+    <!-- 列出与话题相关的条目 -->
+    <h2>条目列表</h2>
+    <ul>
+        {% for entry in topic.entry_set.all %}
+            <li>
+                {{ entry.text }}
+                <a href="{% url 'learning_logs:delete_entry' entry.id %}">删除条目</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- 返回首页或话题列表 -->
+    <a href="{% url 'learning_logs:index' %}">返回首页</a>
+</body>
+</html>
+

@@ -1,0 +1,19 @@
+<!-- learning_logs/entry_detail.html -->
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ entry.text }}</title>
+</head>
+<body>
+    <h1>{{ entry.text }}</h1>
+    <p>这是条目的详细内容。</p>
+
+    <!-- 删除条目链接 -->
+    <a href="{% url 'learning_logs:delete_entry' entry.id %}">删除条目</a>
+
+    <!-- 返回到话题页面 -->
+    <a href="{% url 'learning_logs:topic' entry.topic.id %}">返回话题</a>
+</body>
+</html>

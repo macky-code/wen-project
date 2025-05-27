@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ habit.name }} - 打卡历史</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .back-link {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .back-link:hover {
+            background-color: #218838;
+        }
+
+        .checkin-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .checkin-date {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .checkin-time {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .no-history {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+            color: #666;
+        }
+
+        .stats {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stat-item {
+            display: inline-block;
+            margin: 0 20px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 {{ habit.name }} - 打卡历史</h1>
+    </div>
+
+    <a href="{% url 'learning_logs:habits' %}" class="back-link">← 返回习惯列表</a>
+
+    <div class="stats">
+        <div class="stat-item">
+            <div class="stat-number">{{ checkins.count }}</div>
+            <div class="stat-label">简单打卡次数</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">{{ habit_logs.count }}</div>
+            <div class="stat-label">详细记录次数</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">{{ habit_logs|length|add:checkins.count }}</div>
+            <div class="stat-label">总记录数</div>
+        </div>
+    </div>
+
+    {% if checkins or habit_logs %}
+        <div class="history">
+            <h3>📋 简单打卡记录</h3>
+            {% for checkin in checkins %}
+                <div class="checkin-item">
+                    <span class="checkin-date">{{ checkin.date|date:"Y年m月d日" }}</span>
+                    <span class="checkin-time">简单打卡</span>
+                </div>
+            {% empty %}
+                <p style="color: #666; text-align: center; padding: 20px;">暂无简单打卡记录</p>
+            {% endfor %}
+
+            <h3 style="margin-top: 30px;">📝 详细打卡记录</h3>
+            {% for log in habit_logs %}
+                <div class="checkin-item">
+                    <div>
+                        <span class="checkin-date">{{ log.date|date:"Y年m月d日" }}</span>
+                        <span class="checkin-time">
+                            {% if log.completed %}
+                                <span style="color: #28a745;">✔ 已完成</span>
+                            {% else %}
+                                <span style="color: #dc3545;">✘ 未完成</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% if log.notes %}
+                        <div style="margin-top: 5px; color: #666; font-size: 0.9em;">
+                            备注：{{ log.notes }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p style="color: #666; text-align: center; padding: 20px;">暂无详细打卡记录</p>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-history">
+            <h3>😴 还没有打卡记录</h3>
+            <p>开始你的第一次打卡吧！</p>
+        </div>
+    {% endif %}
+</body>
+</html>

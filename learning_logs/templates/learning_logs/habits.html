@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>今天的打卡</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'learning_log/style.css' %}">
+    <style>
+        .habit {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .done {
+            background-color: #b2f2bb;
+        }
+        .not-done {
+            background-color: #ffe3e3;
+        }
+        .habit-actions {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📆 {{ request.user.username }}，今天的打卡情况</h1>
+
+    {% for habit, checked_in in habit_status.items %}
+        <div class="habit {% if checked_in %}done{% else %}not-done{% endif %}">
+            <span>{{ habit.name }}</span>
+            <div class="habit-actions">
+                {% if not checked_in %}
+                    <a href="{% url 'learning_logs:checkin' habit.id %}">打卡</a>
+                {% endif %}
+                <a href="{% url 'learning_logs:habit_history' habit.id %}">查看历史</a>
+            </div>
+        </div>
+    {% empty %}
+        <p>你还没有创建任何习惯。</p>
+    {% endfor %}
+</body>
+</html>
+

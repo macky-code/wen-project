@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户主页</title>
+</head>
+<body>
+    <header>
+        <h1>欢迎, {{ user.username }}！</h1>
+    </header>
+
+<!-- 打卡入口按钮 -->
+<div class="card">
+    <h2>📌 每日习惯打卡</h2>
+    <p>记录今天的习惯完成情况</p>
+    <a href="{% url 'learning_logs:habits' %}" class="btn">📆 去打卡</a>
+
+</div>
+
+
+<!-- 我的习惯部分 -->
+<section>
+    <h2>我的习惯：</h2>
+    <ul>
+        {% for habit in habits %}
+            <li>
+                {{ habit.name }}（创建于 {{ habit.created_at|date:"Y-m-d" }}）
+
+                <a href="{% url 'learning_logs:checkin' habit.id %}">✅ 打卡</a>
+                <a href="{% url 'learning_logs:add_habit_log' habit.id %}">📝 添加日志</a>
+                <a href="{% url 'learning_logs:habit_log' habit.id %}">📖 查看日志</a>
+            </li>
+        {% empty %}
+            <li>您还没有创建任何习惯。</li>
+        {% endfor %}
+    </ul>
+    <p><a href="{% url 'learning_logs:add_habit' %}">➕ 添加新习惯</a></p>
+</section>
+
+
+
+    <!-- 话题部分 -->
+    <section>
+        <h2>您的话题：</h2>
+        <ul>
+            {% for topic in topics %}
+                <li>
+                    {{ topic.text }} - 添加于 {{ topic.date_added }}
+                    <a href="{% url 'users:new_entry' topic.id %}">📝 添加条目</a>
+                </li>
+            {% empty %}
+                <li>您还没有任何话题。</li>
+            {% endfor %}
+        </ul>
+        <p><a href="{% url 'users:new_topic' %}">➕ 添加新话题</a></p>  <!-- 添加话题入口 -->
+    </section>
+
+
+
+    <!-- 条目部分 -->
+    <section>
+        <h2>您的条目：</h2>
+        <ul>
+            {% for entry in entries %}
+                <li>
+                    {{ entry.text|truncatewords:10 }} - 添加于 {{ entry.date_added }}
+                    <!-- 编辑 & 删除按钮 -->
+                    <a href="{% url 'learning_logs:edit_entry' entry.id %}">✏️ 编辑</a>
+                    <a href="{% url 'learning_logs:delete_entry' entry.id %}">🗑️ 删除</a>
+                </li>
+            {% empty %}
+                <li>您还没有任何条目。</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <!-- 退出登录 -->
+    <footer>
+        <form action="{% url 'users:logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">登出</button>
+        </form>
+    </footer>
+</body>
+</html>
+
+

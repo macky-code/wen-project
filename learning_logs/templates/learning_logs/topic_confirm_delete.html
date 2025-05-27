@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>确认删除话题</title>
+</head>
+<body>
+    <h2>确认删除话题</h2>
+    <p>确定要删除 "<strong>{{ topic.text }}</strong>" 吗？</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">确认删除</button>
+    </form>
+    <a href="{% url 'learning_logs:index' %}">取消</a>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每周习惯记录</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #555;
+            margin-top: 20px;
+        }
+        .log-entry {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+        }
+        .log-entry h5 {
+            margin: 0 0 10px 0;
+            color: #007bff;
+        }
+        .log-entry p {
+            margin: 5px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .no-data {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>每周习惯记录</h2>
+
+        {% if habit %}
+            <h3>{{ habit.name }}</h3>
+            {% if habit.description %}
+                <p>{{ habit.description }}</p>
+            {% endif %}
+
+            {% if weekly_logs %}
+                <div class="weekly-logs">
+                    <h4>每周进度</h4>
+                    {% for log in weekly_logs %}
+                        <div class="log-entry">
+                            <h5>{{ log.week_start|date:"Y年m月d日" }}这周</h5>
+                            <p><strong>完成情况:</strong> {{ log.completed_days }}/7 天</p>
+                            {% if log.notes %}
+                                <p><strong>备注:</strong> {{ log.notes }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-data">
+                    <p>该习惯暂无每周记录。</p>
+                </div>
+            {% endif %}
+
+            <a href="{% url 'learning_logs:habits' %}" class="btn">返回习惯列表</a>
+        {% else %}
+            <div class="no-data">
+                <p>未找到该习惯。</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+
+
+

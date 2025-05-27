@@ -1,0 +1,433 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'learning_logs/style.css' %}">
+<link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>笔记主页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        /* 改进的导航栏样式 */
+        .navbar {
+            background: linear-gradient(135deg, #4a5568, #2d3748);
+            color: white;
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .user-welcome {
+            color: white;
+            font-size: 14px;
+            opacity: 0.9;
+            margin: 0 10px;
+        }
+
+        .user-home-link {
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.5);
+        }
+
+        .user-home-link:hover {
+            border-bottom: 1px solid white;
+        }
+
+        /* 主标题区域 */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px 30px;
+        }
+
+        .hero h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* 添加新习惯按钮 */
+        .add-habit-button {
+            background: linear-gradient();
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            box-shadow: 0 3px 10px rgba(47, 133, 90, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+        }
+
+        .add-habit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(47, 133, 90, 0.4);
+        }
+
+        .add-habit-icon {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* 内容容器 */
+        .container {
+            padding: 0 16px 20px;
+            max-width: 100%;
+        }
+
+        /* 介绍卡片 */
+        .intro-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: -20px 16px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .intro-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .intro-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .intro-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .intro-text {
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* 主要功能区域 */
+        .main-section {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 16px 20px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .section-subtitle {
+            padding: 8px 20px 16px;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #718096;
+        }
+
+        .empty-icon {
+            width: 60px;
+            height: 60px;
+            background: #f7fafc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 24px;
+        }
+
+        .empty-text {
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        .empty-hint {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        /* 图片区域 */
+        .image-section {
+            display: flex;
+            gap: 12px;
+            padding: 0 20px 20px;
+            overflow-x: auto;
+        }
+
+        .content-image {
+            width: 180px;
+            height: 120px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        /* 底部区域 */
+        .bottom-section {
+            background: linear-gradient(135deg, #2c5530, #3d7c47);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin: 20px 0 0;
+        }
+
+        .quote-text {
+            font-size: 1.3rem;
+            font-weight: 300;
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+
+        .quote-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* 响应式优化 */
+        @media (max-width: 375px) {
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-link {
+                font-size: 12px;
+            }
+
+            .intro-card {
+                margin: -15px 12px 16px;
+                padding: 16px;
+            }
+
+            .container {
+                padding: 0 12px 16px;
+            }
+        }
+        /* 添加新习惯按钮 - 现代渐变风格 */
+.button-add-habit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.button-add-habit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    text-decoration: none;
+    color: white;
+}
+
+.button-add-habit:active {
+    transform: translateY(0);
+}
+    </style>
+
+</head>
+<body>
+    <!-- 改进的导航栏 -->
+    <nav class="navbar">
+        <a href="{% url 'learning_logs:index' %}" class="navbar-brand">学习笔记</a>
+        <div class="nav-links">
+            <a href="{% url 'learning_logs:index' %}" class="nav-link">主页</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'users:logout' %}" class="nav-link">注销</a>
+                <span class="user-welcome">欢迎, {{ user.username }}</span>
+                <a href="{% url 'users:user_home' %}" class="user-home-link">您的个人主页</a>
+            {% else %}
+                <a href="{% url 'users:login' %}" class="nav-link">登录</a>
+                <a href="{% url 'users:register' %}" class="nav-link">注册</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- 主标题 -->
+    <section class="hero">
+        <h1>欢迎来到学习笔记主页！</h1>
+
+    </section>
+
+    <!-- 介绍卡片 -->
+    <div class="intro-card">
+        <div class="intro-header">
+            <div class="intro-icon">✨</div>
+            <h3 class="intro-title">日常打卡式记录</h3>
+        </div>
+        <p class="intro-text">
+            一个简单的记录工具，为每天想做与做过的事情留下痕迹。
+        </p>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="container">
+        <!-- 每日记录 -->
+        <div class="main-section">
+            <div class="section-header">
+                <div class="section-icon">📝</div>
+                <h2 class="section-title">每日记录</h2>
+            </div>
+            <p class="section-subtitle">今天需要记录什么？</p>
+
+
+            <div class="add-habit-button" >
+
+
+                <a href="{% url 'learning_logs:add_habit' %}" class="button-add-habit">
+                    🖋️ 添加新习惯
+                </a>
+            </div>
+
+            <div class="image-section">
+                <img src="{% static 'images/istockphoto-459897141-612x612.jpg' %}" alt="图片1" style="width:300px; height:auto;">
+                <img src="{% static 'images/istockphoto-1438634414-612x612.jpg' %}" alt="图片2" style="width:300px; height:auto;">
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部励志区域 -->
+    <section class="bottom-section">
+        <div class="quote-text">"One Day At A Time"</div>
+        <p class="quote-subtitle">
+            把一个个平常的日子拖至身畔，再送向身后。<br>
+            看看时间的沉淀，会不会让自己活成想要的样子。
+        </p>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'learning_logs:new_topic' %}" class="cta-button">添加新的话题</a>
+        {% else %}
+            <a href="{% url 'users:login' %}?next={% url 'learning_logs:new_topic' %}" class="cta-button">添加新的话题</a>
+        {% endif %}
+
+    </section>
+</body>
+</html>
