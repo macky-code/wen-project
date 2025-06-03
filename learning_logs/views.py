@@ -44,8 +44,8 @@ def topic(request, topic_id):
     return render(request, 'learning_logs/topic.html', context)
 
 
-def topic_detail(request, id):
-    topic = get_object_or_404(Topic, id=id)
+def topic_detail(request, topic_id):
+    topic = get_object_or_404(Topic, id=topic_id)
     return render(request, 'learning_logs/topic_detail.html', {'topic': topic})
 
 
@@ -179,16 +179,81 @@ def checkin(request, habit_id):
 
 @login_required
 def habit_history(request, habit_id):
-    """显示特定习惯的打卡历史记录"""
     habit = get_object_or_404(Habit, id=habit_id, owner=request.user)
-    checkins = HabitCheckin.objects.filter(habit=habit).order_by('-date')
+
+    # 获取周偏移量参数（0表示当前周，1表示上一周，-1表示下一周）
+    week_offset = int(request.GET.get('week_offset', 0))
+
+    # 计算当前周的开始日期（周一）
+    today = timezone.now().date()
+    current_week_start = today - timedelta(days=today.weekday())
+
+    # 根据偏移量计算目标周
+
+    target_week_start = current_week_start - timedelta(weeks=week_offset)
+    target_week_end = target_week_start + timedelta(days=6)
+
+    # 获取该周的所有打卡记录
+    week_checkins = HabitCheckin.objects.filter(
+        habit=habit,
+        date__range=[target_week_start, target_week_end]
+    ).order_by('date')
+
+    week_habit_logs = HabitLog.objects.filter(
+        habit=habit,
+        date__range=[target_week_start, target_week_end]
+    ).order_by('date')
+
+    # 构建这一周每一天的数据
+    week_days = []
+    for i in range(7):
+        day_date = target_week_start + timedelta(days=i)
+
+        # 检查这一天是否有打卡记录
+        has_checkin = week_checkins.filter(date=day_date).exists()
+        has_detailed = week_habit_logs.filter(date=day_date).exists()
+
+        week_days.append({
+            'date': day_date,
+            'has_checkin': has_checkin,
+            'has_detailed': has_detailed,
+        })
+
+    # 计算本周统计数据
+    week_completed_days = sum(1 for day in week_days if day['has_checkin'] or day['has_detailed'])
+    week_simple_checkins = week_checkins.count()
+    week_detailed_logs = week_habit_logs.count()
+    week_completion_rate = round((week_completed_days / 7) * 100) if week_completed_days else 0
+
+    # 检查是否有上一周和下一周的数据
+    has_previous_week = True  # 总是可以查看历史
+    has_next_week = target_week_start < current_week_start  # 不能查看未来
+
+    # 获取所有打卡记录（用于总体统计）
+    all_checkins = HabitCheckin.objects.filter(habit=habit).order_by('-date')
+    all_habit_logs = HabitLog.objects.filter(habit=habit).order_by('-date')
 
     context = {
         'habit': habit,
-        'checkins': checkins,
-    }
-    return render(request, 'learning_logs/habit_history.html', context)
+        'checkins': all_checkins,
+        'habit_logs': all_habit_logs,
 
+        # 周视图相关数据
+        'week_offset': week_offset,
+        'current_week_start': target_week_start,
+        'current_week_end': target_week_end,
+        'week_days': week_days,
+        'has_previous_week': has_previous_week,
+        'has_next_week': has_next_week,
+
+        # 周统计数据
+        'week_completed_days': week_completed_days,
+        'week_simple_checkins': week_simple_checkins,
+        'week_detailed_logs': week_detailed_logs,
+        'week_completion_rate': week_completion_rate,
+    }
+
+    return render(request, 'learning_logs/habit_history.html', context)
 
 # ==================== HabitLog相关视图 ====================
 @login_required

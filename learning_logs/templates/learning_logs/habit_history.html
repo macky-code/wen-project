@@ -37,35 +37,6 @@
             background-color: #218838;
         }
 
-        .checkin-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .checkin-date {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .checkin-time {
-            color: #666;
-            font-size: 0.9em;
-        }
-
-        .no-history {
-            text-align: center;
-            padding: 40px;
-            background: white;
-            border-radius: 10px;
-            color: #666;
-        }
-
         .stats {
             background: white;
             padding: 20px;
@@ -88,6 +59,188 @@
         .stat-label {
             color: #666;
             font-size: 0.9em;
+        }
+
+        .week-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .nav-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .nav-btn.disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .week-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .week-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .day-header {
+            background: #f8f9fa;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: #495057;
+        }
+
+        .day-cell {
+            background: white;
+            padding: 16px 8px;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .day-cell.checked {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        }
+
+        .day-cell.detailed {
+            background: linear-gradient(135deg, #cce5ff 0%, #b3d9ff 100%);
+        }
+
+        .day-number {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #333;
+        }
+
+        .day-cell.checked .day-number {
+            color: #155724;
+        }
+
+        .day-cell.detailed .day-number {
+            color: #004085;
+        }
+
+        .check-mark {
+            font-size: 20px;
+            margin-top: 4px;
+        }
+
+        .day-cell.checked .check-mark {
+            color: #28a745;
+        }
+
+        .day-cell.detailed .check-mark {
+            color: #007bff;
+        }
+
+        .week-summary {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .summary-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .summary-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .summary-item {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .summary-item strong {
+            color: #333;
+        }
+
+        .no-history {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .stats {
+                padding: 15px;
+            }
+
+            .stat-item {
+                display: block;
+                margin: 10px 0;
+            }
+
+            .week-navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .day-header, .day-cell {
+                padding: 8px 4px;
+                font-size: 12px;
+            }
+
+            .day-cell {
+                min-height: 60px;
+            }
+
+            .summary-stats {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
@@ -114,39 +267,43 @@
     </div>
 
     {% if checkins or habit_logs %}
-        <div class="history">
-            <h3>📋 简单打卡记录</h3>
-            {% for checkin in checkins %}
-                <div class="checkin-item">
-                    <span class="checkin-date">{{ checkin.date|date:"Y年m月d日" }}</span>
-                    <span class="checkin-time">简单打卡</span>
-                </div>
-            {% empty %}
-                <p style="color: #666; text-align: center; padding: 20px;">暂无简单打卡记录</p>
-            {% endfor %}
+        <div class="week-navigation">
+            <a href="?week_offset={{ week_offset|add:1 }}" class="nav-btn {% if not has_previous_week %}disabled{% endif %}">← 上一周</a>
+            <div class="week-title">{{ current_week_start|date:"Y年m月d日" }} - {{ current_week_end|date:"Y年m月d日" }}</div>
+            <a href="?week_offset={{ week_offset|add:-1 }}" class="nav-btn {% if not has_next_week %}disabled{% endif %}">下一周 →</a>
+        </div>
 
-            <h3 style="margin-top: 30px;">📝 详细打卡记录</h3>
-            {% for log in habit_logs %}
-                <div class="checkin-item">
-                    <div>
-                        <span class="checkin-date">{{ log.date|date:"Y年m月d日" }}</span>
-                        <span class="checkin-time">
-                            {% if log.completed %}
-                                <span style="color: #28a745;">✔ 已完成</span>
-                            {% else %}
-                                <span style="color: #dc3545;">✘ 未完成</span>
-                            {% endif %}
-                        </span>
+        <div class="week-container">
+            <div class="week-grid">
+                <div class="day-header">周一</div>
+                <div class="day-header">周二</div>
+                <div class="day-header">周三</div>
+                <div class="day-header">周四</div>
+                <div class="day-header">周五</div>
+                <div class="day-header">周六</div>
+                <div class="day-header">周日</div>
+
+                {% for day in week_days %}
+                    <div class="day-cell {% if day.has_checkin %}checked{% endif %} {% if day.has_detailed %}detailed{% endif %}">
+                        <div class="day-number">{{ day.date.day }}</div>
+                        {% if day.has_checkin or day.has_detailed %}
+                            <div class="check-mark">
+                                {% if day.has_detailed %}📝{% else %}✓{% endif %}
+                            </div>
+                        {% endif %}
                     </div>
-                    {% if log.notes %}
-                        <div style="margin-top: 5px; color: #666; font-size: 0.9em;">
-                            备注：{{ log.notes }}
-                        </div>
-                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="week-summary">
+                <div class="summary-title">本周总结</div>
+                <div class="summary-stats">
+                    <div class="summary-item"><strong>{{ week_completed_days }}</strong> 天完成打卡</div>
+                    <div class="summary-item"><strong>{{ week_simple_checkins }}</strong> 次简单打卡</div>
+                    <div class="summary-item"><strong>{{ week_detailed_logs }}</strong> 次详细记录</div>
+                    <div class="summary-item">完成率: <strong>{{ week_completion_rate }}%</strong></div>
                 </div>
-            {% empty %}
-                <p style="color: #666; text-align: center; padding: 20px;">暂无详细打卡记录</p>
-            {% endfor %}
+            </div>
         </div>
     {% else %}
         <div class="no-history">
