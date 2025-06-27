@@ -150,4 +150,9 @@ if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     # 生产环境配置（暂时不用）
-    pass
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.qq.com'  # 或其他邮箱服务商
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = 'your_email@qq.com'
+    EMAIL_HOST_PASSWORD = 'your_app_password'  # 注意是授权码，不是登录密码
+    EMAIL_USE_TLS = True
