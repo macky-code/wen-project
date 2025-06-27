@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,10 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-byznr1e)q8)_z&f!r$yvas80y0ww4115z5&c9m)epd+c&6z#&('
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+# 如果是runserver命令，就是开发环境
+DEBUG = 'runserver' in sys.argv
+
+if DEBUG:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+else:
+    ALLOWED_HOSTS = ['47.76.142.149']
+
+
 
 
 # Application definition
@@ -85,6 +91,8 @@ DATABASES = {
 }
 
 
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -121,7 +129,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # 新增这一行，用于部署时收集静态文件
 
 
 # Default primary key field type
@@ -136,3 +144,10 @@ LOGIN_REDIRECT_URL = '/user_home/'  # 登录后重定向到用户主页
 LOGOUT_REDIRECT_URL = '/'  # 退出登录后跳转到首页
 LOGIN_URL = '/users/login/'  # 未登录时重定向到登录页面
 
+# 邮件配置 - 本地开发用
+if DEBUG:
+    # 开发环境：在控制台显示邮件内容，不需要真实邮箱
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    # 生产环境配置（暂时不用）
+    pass

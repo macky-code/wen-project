@@ -36,3 +36,4 @@ urlpatterns = [
     # 用户相关
     path('profile/', views.profile, name='profile'),
 ]
+

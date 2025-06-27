@@ -26,6 +26,11 @@
         <button type="submit">登录</button>
     </form>
 
+      <!-- 重置密码链接 -->
+        <div class="form-links">
+            <a href="{% url 'users:password_reset' %}" class="forgot-password">忘记密码？</a>
+        </div>
+
     <!-- 登录表单下方的用户主页链接 -->
     <p>或前往 <a href="{% url 'users:user_home' %}">用户主页</a></p>
 

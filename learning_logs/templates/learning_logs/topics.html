@@ -10,7 +10,7 @@
     <ul>
         {% for topic in topics %}
         <li>
-            <a href="{% url 'learning_logs:topic_detail' topic.id %}">{{ topic.text }}</a>
+            <a href="{% url 'learning_logs:topic' topic.id %}">{{ topic.text }}</a>
 
             <!-- 只有当前用户是 topic.owner 时，才显示删除按钮 -->
             {% if topic.owner == request.user %}

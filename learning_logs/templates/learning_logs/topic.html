@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ topic.text }}</title>
+</head>
+<body>
+    <h1>{{ topic.text }}</h1>
+
+    <h2>条目列表：</h2>
+    <ul>
+        {% for entry in entries %}
+            <li>
+                {{ entry.date_added|date:"Y年m月d日 H:i" }}<br>
+                {{ entry.text|linebreaks }}
+                <br>
+                <a href="{% url 'learning_logs:edit_entry' entry.id %}">编辑</a>
+                <a href="{% url 'learning_logs:delete_entry' entry.id %}" style="color:red">删除</a>
+            </li>
+        {% empty %}
+            <li>该话题下还没有条目。</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'learning_logs:new_entry' topic.id %}">➕ 添加新条目</a><br>
+    <a href="{% url 'learning_logs:topics' %}">返回所有话题</a>
+</body>
+</html>
+
+
+
+

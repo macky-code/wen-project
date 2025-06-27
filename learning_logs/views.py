@@ -118,14 +118,12 @@ def edit_entry(request, entry_id):
         if form.is_valid():
             form.save()
             messages.success(request, '条目更新成功！')
-            return redirect('learning_logs:topic_detail', id=topic.id)
+            return redirect('learning_logs:topic', topic_id=topic.id)
     else:
         form = EntryForm(instance=entry)
 
     return render(request, 'learning_logs/edit_entry.html', {'form': form, 'entry': entry, 'topic': topic})
 
-
-# ==================== Habit相关视图 ====================
 @login_required
 def habits(request):
     """显示当前用户的所有习惯及打卡状态"""
